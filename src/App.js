@@ -1,5 +1,5 @@
 import './App.css';
-import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signOut } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, signOut } from "firebase/auth";
 
 import initializeAuthentication from './Firebase/firebase.initialize';
 import { useState } from 'react';
@@ -7,6 +7,8 @@ import { useState } from 'react';
 initializeAuthentication();
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+
 
 
 function App() {
@@ -47,6 +49,25 @@ function App() {
       })
   }
 
+
+  const handleFacebookSignIn = () => {
+    signInWithPopup(auth, facebookProvider)
+      .then((result) => {
+        const { displayName, email, photoURL } = result.user;
+        console.log(result.user);
+        const loggedInUser = {
+          name: displayName,
+          email: email,
+          photo: photoURL
+        }
+        setUser(loggedInUser)
+      })
+      .catch((error) => {
+        console.log('Facebook Login Error:', error.message);
+      })
+
+  }
+
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
@@ -63,6 +84,7 @@ function App() {
           <div>
             <button onClick={handleGoogleSignIn}>Google Sign in</button>
             <button onClick={handleGithubSignIn}>Github Sign In</button>
+            <button onClick={handleFacebookSignIn}>Facebook Sign In</button>
           </div> :
           <button onClick={handleSignOut}>Sign Out</button>
       }
